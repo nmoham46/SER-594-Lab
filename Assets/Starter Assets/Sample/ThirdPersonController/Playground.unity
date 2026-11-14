@@ -7418,7 +7418,7 @@ MonoBehaviour:
   maxSpawnTime: 10
   minimumItems: 2
   maximumItems: 10
-  minimumPlayerDistance: 8
+  minimumPlayerDistance: 3.5
   player: {fileID: 7951921459101845840, guid: db8f96c66b33d4c0f9396317efdc54e5, type: 3}
 --- !u!4 &2135917360
 Transform:

@@ -15,7 +15,7 @@ public class RandomSpawner : MonoBehaviour
     [SerializeField] private float maxSpawnTime = 10f;
     [SerializeField] private int minimumItems = 2;
     [SerializeField] private int maximumItems = 10;
-    [SerializeField] private float minimumPlayerDistance = 8f;
+    [SerializeField] private float minimumPlayerDistance = 3.5f;
 
     [Header("Player")]
     [SerializeField] private Transform player;
