@@ -10,11 +10,20 @@ public class Inventory : MonoBehaviour
     public int ItemCount => items.Count;
     public int MaxItems => maxItems;
 
+    // Add an item to the inventory
     public bool AddItem(string itemName)
     {
+        // Inventory cannot hold more than 5 items
         if (items.Count >= maxItems)
         {
             Debug.Log("Inventory is full!");
+            return false;
+        }
+
+        // Player can only carry one Book
+        if (itemName.StartsWith("The Book of") && HasBook())
+        {
+            Debug.Log("You already have a Book!");
             return false;
         }
 
@@ -28,28 +37,50 @@ public class Inventory : MonoBehaviour
         return true;
     }
 
+    // Check whether the player currently has a Book
+    public bool HasBook()
+    {
+        foreach (string item in items)
+        {
+            if (item.StartsWith("The Book of"))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Check for a specific item
     public bool HasItem(string itemName)
     {
         return items.Contains(itemName);
     }
 
+    // Remove a specific item
     public bool RemoveItem(string itemName)
     {
         return items.Remove(itemName);
     }
 
+    // Get an item using its inventory slot/index
     public string GetItem(int index)
     {
         if (index < 0 || index >= items.Count)
+        {
             return null;
+        }
 
         return items[index];
     }
 
+    // Remove an item using its inventory slot/index
     public bool RemoveItemAt(int index)
     {
         if (index < 0 || index >= items.Count)
+        {
             return false;
+        }
 
         items.RemoveAt(index);
         return true;
