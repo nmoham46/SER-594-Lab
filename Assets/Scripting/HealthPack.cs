@@ -2,18 +2,21 @@ using UnityEngine;
 
 public class HealthPack : MonoBehaviour
 {
+    private bool pickupHandled;
+
     private void OnTriggerEnter(Collider other)
     {
-        Inventory inventory = other.GetComponent<Inventory>();
+        if (pickupHandled)
+            return;
 
-        if (inventory != null)
+        Inventory inventory = other.GetComponentInParent<Inventory>();
+        if (inventory == null)
+            return;
+
+        pickupHandled = true;
+        if (inventory.AddItem("Health Pack"))
         {
-            bool added = inventory.AddItem("Health Pack");
-
-            if (added)
-            {
-                Destroy(gameObject);
-            }
+            Destroy(gameObject);
         }
     }
 }

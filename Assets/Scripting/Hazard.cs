@@ -3,15 +3,26 @@ using UnityEngine;
 public class Hazard : MonoBehaviour
 {
     [SerializeField] private int damage = 1;
+    private bool pickupHandled;
 
     private void OnTriggerEnter(Collider other)
     {
-        PlayerHealth health = other.GetComponent<PlayerHealth>();
+        if (pickupHandled)
+            return;
 
-        if (health != null)
+        PlayerHealth health = other.GetComponentInParent<PlayerHealth>();
+        if (health == null)
+            return;
+
+        pickupHandled = true;
+        health.TakeDamage(damage);
+
+        Inventory inventory = other.GetComponentInParent<Inventory>();
+        if (inventory != null)
         {
-            health.TakeDamage(damage);
-            Destroy(gameObject);
+            inventory.AddItem("Damage Pack");
         }
+
+        Destroy(gameObject);
     }
 }
