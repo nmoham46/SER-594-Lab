@@ -15,7 +15,7 @@ public class RandomSpawner : MonoBehaviour
     [SerializeField] private float maxSpawnTime = 10f;
     [SerializeField] private int minimumItems = 2;
     [SerializeField] private int maximumItems = 10;
-    [SerializeField] private float minimumPlayerDistance = 3f;
+    [SerializeField] private float minimumPlayerDistance = 8f;
 
     [Header("Player")]
     [SerializeField] private Transform player;
@@ -25,26 +25,30 @@ public class RandomSpawner : MonoBehaviour
 
     void Start()
     {
-        ResetTimer();
-
-        // Ensure minimum number exists immediately
-        while (GetItemCount() < minimumItems)
+        if (player == null)
         {
-            if (!TrySpawnItem())
-                break;
+            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+            if (playerObject != null)
+                player = playerObject.transform;
         }
+
+        if (player == null)
+        {
+            Debug.LogError("RandomSpawner needs a Player reference before spawning items.", this);
+            enabled = false;
+            return;
+        }
+
+        ResetTimer();
+        SpawnUntilMinimumIsMet();
     }
 
     void Update()
     {
         RemoveDestroyedItems();
 
-        // Force spawning if below minimum
-        while (GetItemCount() < minimumItems)
-        {
-            if (!TrySpawnItem())
-                break;
-        }
+        // Refill only at spawn points that are still safely away from the player.
+        SpawnUntilMinimumIsMet();
 
         spawnTimer -= Time.deltaTime;
 
@@ -59,37 +63,30 @@ public class RandomSpawner : MonoBehaviour
         }
     }
 
+    void SpawnUntilMinimumIsMet()
+    {
+        while (GetItemCount() < minimumItems)
+        {
+            if (!TrySpawnItem())
+                break;
+        }
+    }
+
     bool TrySpawnItem()
     {
+        if (player == null || spawnPoints == null || spawnPoints.Length == 0)
+            return false;
+
         List<Transform> validPoints = new List<Transform>();
-
-        // Player position ignoring Y height
-        Vector3 playerFlat = new Vector3(
-            player.position.x,
-            0f,
-            player.position.z
-        );
-
         foreach (Transform point in spawnPoints)
         {
-            // Spawn point position ignoring Y height
-            Vector3 spawnFlat = new Vector3(
-                point.position.x,
-                0f,
-                point.position.z
-            );
-
-            // Don't use spawn points too close to the player
-            if (Vector3.Distance(playerFlat, spawnFlat) < minimumPlayerDistance)
+            if (point == null || !IsFarEnoughFromPlayer(point.position))
                 continue;
 
             bool occupied = false;
-
-            // Make sure another spawned item isn't already here
             foreach (GameObject item in spawnedItems)
             {
-                if (item != null &&
-                    Vector3.Distance(item.transform.position, point.position) < 0.5f)
+                if (item != null && FlatDistance(item.transform.position, point.position) < 1.5f)
                 {
                     occupied = true;
                     break;
@@ -100,36 +97,35 @@ public class RandomSpawner : MonoBehaviour
                 validPoints.Add(point);
         }
 
-        // No safe spawn location available
         if (validPoints.Count == 0)
             return false;
 
-        Transform selectedPoint =
-            validPoints[Random.Range(0, validPoints.Count)];
+        Transform selectedPoint = validPoints[Random.Range(0, validPoints.Count)];
 
-        // Check player distance one more time immediately before spawning
-        Vector3 selectedFlat = new Vector3(
-            selectedPoint.position.x,
-            0f,
-            selectedPoint.position.z
-        );
-
-        if (Vector3.Distance(playerFlat, selectedFlat) < minimumPlayerDistance)
+        // Recheck against the player's latest position immediately before spawning.
+        Vector3 spawnPosition = selectedPoint.position;
+        if (!IsFarEnoughFromPlayer(spawnPosition))
             return false;
 
-        // Randomly choose Hazard or Health Pack
-        GameObject selectedPrefab =
-            Random.value < 0.5f ? hazardPrefab : healthPackPrefab;
+        GameObject selectedPrefab = Random.value < 0.5f ? hazardPrefab : healthPackPrefab;
+        if (selectedPrefab == null)
+            return false;
 
-        GameObject newItem = Instantiate(
-            selectedPrefab,
-            selectedPoint.position,
-            Quaternion.identity
-        );
-
+        GameObject newItem = Instantiate(selectedPrefab, spawnPosition, Quaternion.identity);
         spawnedItems.Add(newItem);
-
         return true;
+    }
+
+    bool IsFarEnoughFromPlayer(Vector3 position)
+    {
+        return player != null && FlatDistance(player.position, position) >= minimumPlayerDistance;
+    }
+
+    static float FlatDistance(Vector3 a, Vector3 b)
+    {
+        a.y = 0f;
+        b.y = 0f;
+        return Vector3.Distance(a, b);
     }
 
     int GetItemCount()
