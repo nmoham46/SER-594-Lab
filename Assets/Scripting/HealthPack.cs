@@ -2,15 +2,20 @@ using UnityEngine;
 
 public class HealthPack : MonoBehaviour
 {
-    [SerializeField] private int healAmount = 1;
+    private bool pickupHandled;
 
     private void OnTriggerEnter(Collider other)
     {
-        PlayerHealth health = other.GetComponent<PlayerHealth>();
+        if (pickupHandled)
+            return;
 
-        if (health != null)
+        Inventory inventory = other.GetComponentInParent<Inventory>();
+        if (inventory == null)
+            return;
+
+        if (inventory.AddItem("Health Pack"))
         {
-            health.Heal(healAmount);
+            pickupHandled = true;
             Destroy(gameObject);
         }
     }
