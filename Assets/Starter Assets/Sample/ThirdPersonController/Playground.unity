@@ -7221,8 +7221,31 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4393907714429634236, guid: 9f6541f988774f4da037d81a2a6b09f3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7987974472037040101}
   m_SourcePrefab: {fileID: 100100000, guid: 9f6541f988774f4da037d81a2a6b09f3, type: 3}
+--- !u!1 &7987974472037040100 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4393907714429634236, guid: 9f6541f988774f4da037d81a2a6b09f3, type: 3}
+  m_PrefabInstance: {fileID: 7987974472037040000}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7987974472037040101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7987974472037040100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f63cf08fa28648068c565b0433104854, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPCSingleMessage
+  npcName: Old Bartholomew
+  message: 'Ah, another adventurer! Word of advice: the glowing green packs mend your bones, the red ones break them. I learned that the hard way... forty-seven times.'
+  talkRange: 2.5
 --- !u!1001 &7987974472037040001
 PrefabInstance:
   m_ObjectHideFlags: 0
