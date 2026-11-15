@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using StarterAssets;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -10,8 +11,9 @@ using UnityEngine.UI;
 //   - Health Pack -> removed, player is healed
 //   - Book        -> nothing happens
 //   - Anything else -> removed with no effect
-// Press I (or click the button) to open/close. While open, the cursor is
-// unlocked and camera look is paused so the player can click the slots.
+// Click the button (or press I) to open/close. The mouse cursor stays visible
+// so the button can always be clicked. Camera look pauses while the inventory
+// is open or while the mouse is over the HUD buttons.
 public class InventoryHUD : MonoBehaviour
 {
     [SerializeField] private Inventory inventory;
@@ -55,6 +57,31 @@ public class InventoryHUD : MonoBehaviour
     {
         if (Keyboard.current != null && Keyboard.current[toggleKey].wasPressedThisFrame)
             SetOpen(!isOpen);
+
+        UpdateCameraLook();
+    }
+
+    // Keep the cursor free and only let the mouse turn the camera when
+    // the player is not using the inventory UI.
+    void UpdateCameraLook()
+    {
+        if (playerInputs == null || !playerInputs.enabled)
+            return;
+        if (playerHealth != null && playerHealth.IsDead)
+            return;
+
+        if (Cursor.lockState != CursorLockMode.None) Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        bool overUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+        bool allowLook = !isOpen && !overUI;
+
+        if (playerInputs.cursorInputForLook != allowLook)
+        {
+            playerInputs.cursorInputForLook = allowLook;
+            if (!allowLook)
+                playerInputs.LookInput(Vector2.zero); // stop the camera drifting
+        }
     }
 
     // ---------- Slot behaviour ----------
@@ -102,7 +129,6 @@ public class InventoryHUD : MonoBehaviour
     {
         if (item == null) return new Color(0.2f, 0.2f, 0.2f, 0.8f);
         if (item == "Health Pack") return new Color(0.2f, 0.6f, 0.25f, 0.95f);
-        if (item == "Damage Pack") return new Color(0.7f, 0.2f, 0.2f, 0.95f);
         if (inventory.IsBook(item)) return new Color(0.75f, 0.6f, 0.15f, 0.95f);
         return new Color(0.25f, 0.4f, 0.7f, 0.95f);
     }
@@ -111,18 +137,15 @@ public class InventoryHUD : MonoBehaviour
     {
         isOpen = open;
         panel.SetActive(open);
-        if (open) ShowMessage("Click an item to use it. Press I to close.");
+        if (open) ShowMessage("Click an item to use it. Click Inventory again (or press I) to close.");
 
-        // Free the mouse while the inventory is open, lock it again when closed
-        Cursor.lockState = open ? CursorLockMode.None : CursorLockMode.Locked;
-        Cursor.visible = open;
-
+        // Cursor is never locked, so the Inventory button is always clickable
         if (playerInputs != null)
-        {
-            playerInputs.cursorLocked = !open;
-            playerInputs.cursorInputForLook = !open;
-            if (open) playerInputs.LookInput(Vector2.zero);
-        }
+            playerInputs.cursorLocked = false;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        UpdateCameraLook();
     }
 
     void ShowMessage(string msg)

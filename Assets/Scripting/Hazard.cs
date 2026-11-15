@@ -17,12 +17,6 @@ public class Hazard : MonoBehaviour
         pickupHandled = true;
         health.TakeDamage(damage);
 
-        Inventory inventory = other.GetComponentInParent<Inventory>();
-        if (inventory != null)
-        {
-            inventory.AddItem("Damage Pack");
-        }
-
         Destroy(gameObject);
     }
 }
