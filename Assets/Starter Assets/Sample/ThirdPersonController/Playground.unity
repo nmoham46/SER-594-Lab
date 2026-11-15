@@ -1754,6 +1754,7 @@ GameObject:
   - component: {fileID: 674584384}
   - component: {fileID: 674584388}
   - component: {fileID: 674584389}
+  - component: {fileID: 674584390}
   m_Layer: 5
   m_Name: HUD
   m_TagString: Untagged
@@ -7156,6 +7157,23 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 346dd096760a472097e2a98cb62fe4da, type: 3}
+--- !u!114 &674584390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 674584383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b05791b8c764a5aa68fadfe80dd1167, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryHUD
+  inventory: {fileID: 0}
+  playerHealth: {fileID: 0}
+  playerInputs: {fileID: 0}
+  healAmount: 1
+  toggleKey: 23
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

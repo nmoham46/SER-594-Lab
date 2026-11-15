@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,6 +10,14 @@ public class Inventory : MonoBehaviour
 
     public int ItemCount => items.Count;
     public int MaxItems => maxItems;
+
+    // Fired whenever an item is added or removed (the HUD listens to this)
+    public event Action OnInventoryChanged;
+
+    public bool IsBook(string itemName)
+    {
+        return itemName != null && itemName.StartsWith("The Book of");
+    }
 
     // Add an item to the inventory
     public bool AddItem(string itemName)
@@ -28,6 +37,7 @@ public class Inventory : MonoBehaviour
         }
 
         items.Add(itemName);
+        OnInventoryChanged?.Invoke();
 
         Debug.Log(
             "Picked up: " + itemName +
@@ -60,7 +70,10 @@ public class Inventory : MonoBehaviour
     // Remove a specific item
     public bool RemoveItem(string itemName)
     {
-        return items.Remove(itemName);
+        bool removed = items.Remove(itemName);
+        if (removed)
+            OnInventoryChanged?.Invoke();
+        return removed;
     }
 
     // Get an item using its inventory slot/index
@@ -83,6 +96,7 @@ public class Inventory : MonoBehaviour
         }
 
         items.RemoveAt(index);
+        OnInventoryChanged?.Invoke();
         return true;
     }
 }

@@ -13,9 +13,9 @@ public class HealthPack : MonoBehaviour
         if (inventory == null)
             return;
 
-        pickupHandled = true;
         if (inventory.AddItem("Health Pack"))
         {
+            pickupHandled = true;
             Destroy(gameObject);
         }
     }
