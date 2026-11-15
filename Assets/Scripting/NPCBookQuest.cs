@@ -22,6 +22,26 @@ public class NPCBookQuest : MonoBehaviour
             "and I am NOT explaining to the Headmaster how I lost a 1,000-year-old book."),
     };
 
+    // Conversation 2: the player HAS the book (5 lines)
+    [SerializeField] private List<DialogueLine> hasBookDialogue = new List<DialogueLine>
+    {
+        new DialogueLine("Madam Quillsworth",
+            "Wait... I can sense it. That faint glow, that whiff of butterbeer... " +
+            "You have The Book of Hogwarts, don't you?"),
+        new DialogueLine("You",
+            "I do! Found it lying around in here. It's surprisingly heavy."),
+        new DialogueLine("Madam Quillsworth",
+            "Oh, thank Merlin! Please, may I have it back? The Headmaster checks the shelves at midnight."),
+        new DialogueLine("You",
+            "Here you go. Try not to lose it again."),
+        new DialogueLine("Madam Quillsworth",
+            "Thank you, thank you! You've saved my job and quite possibly my eyebrows. " +
+            "Ten points to... well, whichever house you're in!"),
+    };
+
+    // Index of the line where the player hands over the book
+    [SerializeField] private int giveBookLineIndex = 3;
+
     private Transform player;
     private Inventory inventory;
     private bool promptShown;
@@ -67,6 +87,28 @@ public class NPCBookQuest : MonoBehaviour
         {
             dialogue.StartDialogue(noBookDialogue);
         }
-        // The "has the book" conversation is added in the next step.
+        else
+        {
+            // Remove the book at the exact moment the player gives it
+            dialogue.StartDialogue(hasBookDialogue, lineIndex =>
+            {
+                if (lineIndex == giveBookLineIndex)
+                    GiveBook();
+            });
+        }
+    }
+
+    void GiveBook()
+    {
+        for (int i = 0; i < inventory.ItemCount; i++)
+        {
+            string item = inventory.GetItem(i);
+            if (inventory.IsBook(item))
+            {
+                inventory.RemoveItemAt(i);
+                Debug.Log(item + " given to " + npcName);
+                return;
+            }
+        }
     }
 }

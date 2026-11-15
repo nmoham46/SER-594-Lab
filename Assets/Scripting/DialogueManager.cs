@@ -47,7 +47,6 @@ public class DialogueManager : MonoBehaviour
 
     private List<DialogueLine> lines;
     private int lineIndex;
-    private Action onLineShown;
     private Action<int> lineCallback;
     private Action onFinished;
     private int startedFrame;
