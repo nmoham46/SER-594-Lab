@@ -9,7 +9,7 @@ public class NPCSingleMessage : MonoBehaviour
     [SerializeField] private string npcName = "Old Bartholomew";
     [SerializeField, TextArea(2, 4)] private string message =
         "Ah, another adventurer! Word of advice: the glowing green packs mend your bones, " +
-        "the red ones break them. I learned that the hard way... forty-seven times.";
+        "the red ones break them. I learned that the hard way... sixty-seven times.";
     [SerializeField] private float talkRange = 2.5f;
 
     private Transform player;

@@ -7244,7 +7244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NPCSingleMessage
   npcName: Old Bartholomew
-  message: 'Ah, another adventurer! Word of advice: the glowing green packs mend your bones, the red ones break them. I learned that the hard way... forty-seven times.'
+  message: 'Ah, another adventurer! Word of advice: the glowing green packs mend your bones, the red ones break them. I learned that the hard way... sixty-seven times.'
   talkRange: 2.5
 --- !u!1001 &7987974472037040001
 PrefabInstance:
@@ -7293,8 +7293,30 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4393907714429634236, guid: 9f6541f988774f4da037d81a2a6b09f3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7987974472037040201}
   m_SourcePrefab: {fileID: 100100000, guid: 9f6541f988774f4da037d81a2a6b09f3, type: 3}
+--- !u!1 &7987974472037040200 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4393907714429634236, guid: 9f6541f988774f4da037d81a2a6b09f3, type: 3}
+  m_PrefabInstance: {fileID: 7987974472037040001}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7987974472037040201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7987974472037040200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a52a5e59f27b473285573d8479b2352a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPCBookQuest
+  npcName: Madam Quillsworth
+  talkRange: 2.5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
