@@ -14,6 +14,9 @@ public class Inventory : MonoBehaviour
     // Fired whenever an item is added or removed (the HUD listens to this)
     public event Action OnInventoryChanged;
 
+    // Fired when an item can't be picked up (the HUD shows it as a warning)
+    public event Action<string> OnPickupFailed;
+
     public bool IsBook(string itemName)
     {
         return itemName != null && itemName.StartsWith("The Book of");
@@ -26,6 +29,7 @@ public class Inventory : MonoBehaviour
         if (items.Count >= maxItems)
         {
             Debug.Log("Inventory is full!");
+            OnPickupFailed?.Invoke("Inventory is full! Can't pick up " + itemName + ".");
             return false;
         }
 
@@ -33,6 +37,7 @@ public class Inventory : MonoBehaviour
         if (itemName.StartsWith("The Book of") && HasBook())
         {
             Debug.Log("You already have a Book!");
+            OnPickupFailed?.Invoke("You can only carry one Book!");
             return false;
         }
 

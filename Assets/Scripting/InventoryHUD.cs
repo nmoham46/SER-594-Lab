@@ -28,11 +28,16 @@ public class InventoryHUD : MonoBehaviour
     private readonly List<TMP_Text> slotLabels = new List<TMP_Text>();
     private bool isOpen;
 
+    [Header("Warning Popup")]
+    [SerializeField] private float warningDuration = 2.5f;
+    private TMP_Text warningText;
+    private float warningTimer;
+
     void Start()
     {
-        if (inventory == null) inventory = FindFirstObjectByType<Inventory>();
-        if (playerHealth == null) playerHealth = FindFirstObjectByType<PlayerHealth>();
-        if (playerInputs == null) playerInputs = FindFirstObjectByType<StarterAssetsInputs>();
+        if (inventory == null) inventory = FindAnyObjectByType<Inventory>();
+        if (playerHealth == null) playerHealth = FindAnyObjectByType<PlayerHealth>();
+        if (playerInputs == null) playerInputs = FindAnyObjectByType<StarterAssetsInputs>();
 
         if (inventory == null)
         {
@@ -43,6 +48,7 @@ public class InventoryHUD : MonoBehaviour
 
         BuildUI();
         inventory.OnInventoryChanged += Refresh;
+        inventory.OnPickupFailed += ShowWarning;
         Refresh();
         SetOpen(false);
     }
@@ -50,7 +56,10 @@ public class InventoryHUD : MonoBehaviour
     void OnDestroy()
     {
         if (inventory != null)
+        {
             inventory.OnInventoryChanged -= Refresh;
+            inventory.OnPickupFailed -= ShowWarning;
+        }
     }
 
     void Update()
@@ -59,6 +68,21 @@ public class InventoryHUD : MonoBehaviour
             SetOpen(!isOpen);
 
         UpdateCameraLook();
+
+        // Hide the warning after a few seconds
+        if (warningTimer > 0f)
+        {
+            warningTimer -= Time.deltaTime;
+            if (warningTimer <= 0f)
+                warningText.gameObject.SetActive(false);
+        }
+    }
+
+    void ShowWarning(string msg)
+    {
+        warningText.text = msg;
+        warningText.gameObject.SetActive(true);
+        warningTimer = warningDuration;
     }
 
     // Keep the cursor free and only let the mouse turn the camera when
@@ -158,6 +182,15 @@ public class InventoryHUD : MonoBehaviour
     void BuildUI()
     {
         RectTransform root = (RectTransform)transform;
+
+        // Warning popup (top-centre, red)
+        warningText = CreateText(root, "InventoryWarning", "", 32);
+        Place(warningText.rectTransform, new Vector2(0.5f, 1), new Vector2(0, -80), new Vector2(800, 50), new Vector2(0.5f, 1));
+        warningText.color = new Color(1f, 0.3f, 0.3f);
+        warningText.fontStyle = FontStyles.Bold;
+        warningText.outlineWidth = 0.2f;
+        warningText.outlineColor = Color.black;
+        warningText.gameObject.SetActive(false);
 
         // Toggle button (bottom-right)
         Button toggle = CreateButton(root, "InventoryButton", "Inventory (I)",
